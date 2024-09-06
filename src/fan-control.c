@@ -32,12 +32,6 @@ SOFTWARE.
 #include <fcntl.h>
 #include <unistd.h>
 
-#ifdef __ROCK5A__
-#define PWM_PATH "/sys/devices/platform/fd8b0030.pwm/pwm/pwmchip3"
-#else
-#define PWM_PATH "/sys/devices/platform/fd8b0010.pwm/pwm/pwmchip1"
-#endif
-
 #define TMP_BUFF_LEN_32 32
 int pidfile_fd = 0;
 #define DEFAULT_PID_PATH "/run/fan-control.pid"
@@ -89,7 +83,7 @@ void write_speed(int speed)
 {
     char buffer[16];
     snprintf(buffer, 15, "%d", pwm_speed_map[speed]);
-    write_value(PWM_PATH "/duty_cycle", buffer);
+    write_value("/sys/devices/platform/fd8b0030.pwm/pwm/pwmchip3/pwm0/duty_cycle", buffer);
 }
 
 void set_speed(int speed)
@@ -173,37 +167,35 @@ int init_GPIO()
     char max_speed[16];
     snprintf(max_speed, 15, "%d", pwm_speed_map[mapsize - 1]);
 
-    ret = write_value(PWM_PATH "/export", "0");
+    ret = write_value("/sys/devices/platform/fd8b0030.pwm/pwm/pwmchip3/export", "0");
     if (ret < 0 && errno != EBUSY)
     {
         printf("Failed to export GPIO, %s\n", strerror(errno));
         return -1;
     }
 
-    ret = write_value(PWM_PATH "/pwm0/duty_cycle", "0");
+    ret = write_value("/sys/devices/platform/fd8b0030.pwm/pwm/pwmchip3/pwm0/duty_cycle", "0");
     if (ret < 0 && errno != EINVAL)
     {
         printf("Failed to export GPIO, %s\n", strerror(errno));
         return -1;
     }
 
-    ret = write_value(PWM_PATH "/pwm0/period", max_speed);
+    ret = write_value("/sys/devices/platform/fd8b0030.pwm/pwm/pwmchip3/pwm0/period", max_speed);
     if (ret < 0)
     {
         printf("Failed to export GPIO, %s\n", strerror(errno));
         return -1;
     }
 
-    ret = write_value(PWM_PATH "/pwm0/polarity", "normal");
+    ret = write_value("/sys/devices/platform/fd8b0030.pwm/pwm/pwmchip3/pwm0/polarity", "normal");
     if (ret < 0)
     {
         printf("Failed to export GPIO, %s\n", strerror(errno));
         return -1;
     }
 
-    ret = write_value(
-        PWM_PATH "/pwm0/enable",
-        "1");
+    ret = write_value("/sys/devices/platform/fd8b0030.pwm/pwm/pwmchip3/pwm0/enable", "1");
     if (ret < 0)
     {
         printf("Failed to export GPIO, %s\n", strerror(errno));

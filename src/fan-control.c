@@ -32,6 +32,12 @@ SOFTWARE.
 #include <fcntl.h>
 #include <unistd.h>
 
+#ifdef __ROCK5A__
+#define PWM_PATH "/sys/devices/platform/fd8b0030.pwm/pwm/pwmchip3/pwm0"
+#else
+#define PWM_PATH "/sys/devices/platform/fd8b0030.pwm/pwm/pwmchip3/pwm0"
+#endif
+
 #define TMP_BUFF_LEN_32 32
 int pidfile_fd = 0;
 #define DEFAULT_PID_PATH "/run/fan-control.pid"

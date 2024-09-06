@@ -1,6 +1,7 @@
 
 .PHONY:all
-CFLAGS= -O2 -Wall
+CFLAGS = -O2 -Wall
+CFLAGS+= -D__ROCK5A__
 
 all: fan-control
 
